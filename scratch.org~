@@ -1,0 +1,13 @@
+#+BEGIN_SRC python :results output
+
+txt = "Counselor: Andrea Montague"
+
+x = txt.split()
+
+print(x) 
+
+
+#+END_SRC
+
+#+RESULTS:
+: ['Counselor:', 'Andrea', 'Montague']

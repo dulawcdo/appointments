@@ -1,0 +1,190 @@
+#+STARTUP: indent
+#+TITLE: Planning Docs - Make Zoom Appt Script
+
+This script will help me accomplish the following:
+- schedule zoom meetings for Eric or Andrea
+- input will be of one of two kinds:
+  * info from appt request email
+  * manual entry of info
+
+* Preamble
+
+
+#+BEGIN_SRC python :tangle makezoomappt.py
+
+
+from selenium import webdriver
+
+from selenium.webdriver.support.ui import Select
+
+driver = webdriver.Firefox()
+driver.get("https://udenver.zoom.us/meeting/schedule")
+
+
+driver.find_element_by_css_selector("#username").send_keys("zeeshan.reshamwala@du.edu")
+driver.find_element_by_css_selector("#password").send_keys("Zmn76642Denver")
+driver.find_element_by_css_selector("button.form-element").click()
+
+
+
+#+END_SRC
+   
+* Input Style
+The program asks whether we would like to pull from a pasted appointment request input, or individually request the appointment details.
+
+#+BEGIN_SRC python :tangle makezoomappt.py
+
+print("Input method? [a]Appt request / [m]Manual")
+x = raw_input()
+
+#+END_SRC
+
+* IF: Appt Request Input
+- ask user to paste input
+- extract counselor name
+  - set counselor name variable
+  - set counselor email variable
+- extract student name
+  - set student name variable
+- extract date and time
+  - set date variable
+  - set time variable
+  - set AM / PM variable
+
+#+BEGIN_SRC python :tangle makezoomappt.py
+
+# USING APPOINTMENT DETAILS pulled from email via emacs function send-appt-to-shell()
+
+
+if x == 'a':
+    with open('rawappt.txt') as f:
+        lines = f.readlines()
+        apptint = 0
+        for line in lines:
+            x,y = line.split(':', 1)
+            print(y.strip())
+            apptint += 1
+            if apptint == 1:
+                counselorname = y.strip()
+                if counselorname == "Andrea Montague":
+                    counseloremail = "andrea.montague@du.edu"
+                else
+                    counseloremail = "eric.bono@du.edu"
+            elif apptint == 2:
+                apprawtime, appdate = y.strip().split("on")
+                apptime, appampm = apprawtime.strip().split(" ")
+            elif apptint == 3:
+                studentname = y.strip()
+
+               
+
+# print("Now for the results . . .")
+# print("The counselor is "+counselorname)
+# print(appdate)
+# print(apptime)
+# print(appampm)
+# print("The student is "+studentname)
+
+
+
+
+
+
+
+              
+    
+    # Pending, how to parse the input
+    #  Counselor: Andrea Montague                                                                                     
+    #  Time: 1:00 PM on Sep 23, 2020                                                                                  
+    #  Appointment Type: Initial Meeting (2L & 3L)                                                                    
+    #  Student: Wendy J Kerner   
+
+#+END_SRC
+
+#+RESULTS:
+
+Perhaps the input can be parsed using some advanced heretofore unheard of method.
+
+* IF: Manual Input
+** Eric or Andrea
+- ask user whether the appt is for eric or andrea
+  - set counselor name variable
+  - set counselor email variable
+
+#+BEGIN_SRC python :tangle makezoomappt.py
+else:
+print ('Counselor? Andrea[a] / Eric[e]')
+x2 = raw_input()
+
+if  x2 == 'a':
+    counselorname = "Andrea Montague"
+    counseloremail = "andrea.montague@du.edu"
+else:
+    counselorname = "Eric Bono"
+    counseloremail = "eric.bono@du.edu"
+
+
+
+# print("Now for the results . . .")
+# print("The counselor is "+counselorname)
+# print(appdate)
+# print(apptime)
+# print(appampm)
+# print("The student is "+studentname)
+
+#+END_SRC
+** Appointment Details
+- request student name
+  - set student name variable
+- request date
+  - set date variable
+- request time
+  - set time variable
+  - set AM / PM variable
+
+#+BEGIN_SRC python :tangle makezoomappt.py
+print('Time?')
+apptime = raw_input().strip()
+print('AM/PM?')
+appampm = raw_input().strip()
+print('Student Name?')
+studentname = raw_input().strip()
+print ('Date?')
+appdate = raw_input().strip()
+
+
+
+#+END_SRC
+* Data input
+- go to zoom meeting schedule url
+- find the meeting name element and input "Student Name / Counselor Name"
+- Input the time
+- Input AM, PM
+- Select any other options that need to be selected (if defaults are not remembered in Selenium)
+- Input counselors main du email as co-host
+
+#+BEGIN_SRC python :tangle makezoomappt.py
+
+driver.find_element_by_id("topic").send_keys(studentname+" / "+counselorname)
+Select(driver.find_element_by_id("start_time")).select_by_visible_text(apptime)
+Select(driver.find_element_by_id("start_time_2")).select_by_visible_text(appampm)
+
+print('Input date? y/n')
+x3 = raw_input()
+if x3 == 'y':
+print ('Proceeding . . . ')
+else:
+print ('Moving on, keeping todays date')
+
+driver.find_element_by_id("mtg_alternative_host").send_keys(counseloremail)
+driver.find_element_by_css_selector("button.btn-lg").click()
+
+driver.find_element_by_id("copyInvitation").click()
+
+driver.find_element_by_css_selector("#copyInviteDialog > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > button:nth-child(1)").click()
+
+
+#+END_SRC
+* Save & Copy
+- Submit meeting
+- Click "copy invitation"

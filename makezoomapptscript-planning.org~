@@ -1,0 +1,104 @@
+#+STARTUP: indent
+#+TITLE: Planning Docs - Make Zoom Appt Script
+
+This script will help me accomplish the following:
+- schedule zoom meetings for Eric or Andrea
+- input will be of one of two kinds:
+  * info from appt request email
+  * manual entry of info
+   
+* Input Style
+The program asks whether we would like to pull from a pasted appointment request input, or individually request the appointment details.
+
+#+BEGIN_SRC python
+
+print("Input method? [a]Appt request / [m]Manual")
+x = raw_input()
+
+#+END_SRC
+
+* IF: Appt Request Input
+- ask user to paste input
+- extract counselor name
+  - set counselor name variable
+  - set counselor email variable
+- extract student name
+  - set student name variable
+- extract date and time
+  - set date variable
+  - set time variable
+  - set AM / PM variable
+
+#+BEGIN_SRC python
+
+# USING APPOINTMENT DETAILS pulled from email via emacs function send-appt-to-shell()
+
+x = "a" 
+if x == 'a':
+    with open('rawappt.txt') as f:
+        lines = f.readlines()
+        apptint = 0
+        for line in lines:
+            x,y = line.split(':', 1)
+            print(y.strip())
+            apptint += 1
+            if apptint == 1:
+                counselorname = y.strip()
+            elif apptint == 2:
+                apprawtime, appdate = y.strip().split("on")
+                apptime, appampm = apprawtime.strip().split(" ")
+            elif apptint == 3:
+                studentname = y.strip()
+
+               
+
+# print("Now for the results . . .")
+# print("The counselor is "+counselorname)
+# print(appdate)
+# print(apptime)
+# print(appampm)
+# print("The student is "+studentname)
+
+
+
+
+
+
+
+              
+    
+    # Pending, how to parse the input
+    #  Counselor: Andrea Montague                                                                                     
+    #  Time: 1:00 PM on Sep 23, 2020                                                                                  
+    #  Appointment Type: Initial Meeting (2L & 3L)                                                                    
+    #  Student: Wendy J Kerner   
+
+#+END_SRC
+
+#+RESULTS:
+
+Perhaps the input can be parsed using some advanced heretofore unheard of method.
+
+* IF: Manual Input
+** Eric or Andrea
+- ask user whether the appt is for eric or andrea
+  - set counselor name variable
+  - set counselor email variable
+** Appointment Details
+- request student name
+  - set student name variable
+- request date
+  - set date variable
+- request time
+  - set time variable
+  - set AM / PM variable
+* Data input
+- go to zoom meeting schedule url
+- find the meeting name element and input "Student Name / Counselor Name"
+- Input the time
+- Input AM, PM
+- Select any other options that need to be selected (if defaults are not remembered in Selenium)
+- Input counselors main du email as co-host
+* Save & Copy
+- Submit meeting
+- Click "copy invitation"

@@ -1,0 +1,19 @@
+#+BEGIN_SRC python :results output
+
+txt = "Time: 1:00 PM on Sep 23, 2020"
+
+x,y = txt.split(':', 1)
+        
+apprawtime, appdate = y.strip().split("on")
+apptime, appampm = apprawtime.strip().split(" ")
+
+print(apptime)
+print (appampm)
+
+            
+
+#+END_SRC
+
+#+RESULTS:
+: 1:00
+: PM
